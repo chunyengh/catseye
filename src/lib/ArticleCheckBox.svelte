@@ -2,7 +2,7 @@
 <script lang='ts'>
     import type { ArticleIdObj, AuthorObj } from "./SearchType";
 
-    let { loops, loopIndex, counts, testInfoObjArray } = $props();
+    let { loopIndex, counts, testInfoObjArray } = $props();
     let totalSelectedArticleIdObjArray:ArticleIdObj[][] = $state([]);
 
     function namestr(authorObjArray:AuthorObj[]):string {
@@ -61,7 +61,7 @@
     <prePage>
         <button>上一頁</button>
     </prePage>
-    <pageIndex>  {loopIndex + 1} / {loops + 1} 頁</pageIndex>
+    <pageIndex>  第 {loopIndex + 1} 頁</pageIndex>
     <nxtPage>
         <button>下一頁</button>
     </nxtPage>

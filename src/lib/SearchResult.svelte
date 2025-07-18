@@ -9,11 +9,12 @@
       
     let { searchResult } = $props();
     
-    let loops = searchResult.loops;//number of loops to retrieve all counts
+   // let loops = searchResult.loops;//number of loops to retrieve all counts
     let loopIndex = searchResult.loopIndex;
     let counts = searchResult.counts;
     let articleList = searchResult.articleList;
-    
+    let articleListLength = articleList.length;
+   
     let testInfoObjArray:TestInfoObj[] = [];
     
     for (let i = 0; i < articleList.length; i++){
@@ -44,5 +45,4 @@
     }
 
 </script>
-
-<ArticleCheckBox loops={loops} loopIndex={loopIndex} counts={counts} testInfoObjArray={testInfoObjArray} />
+<ArticleCheckBox loopIndex={loopIndex} counts={counts} testInfoObjArray={testInfoObjArray} />

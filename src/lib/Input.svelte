@@ -22,3 +22,4 @@
  no need to use bind, (searchText follows the rule of data flowing from top to bottom in a component)
  further, and do not want (searchValue from SearchBtn flows back to this component) to update searchText if(in case) searchValue changes -->
 <SearchBtn {searchValue} /> 
+<!--p>in input component searchValue:{searchValue}</p> -->
