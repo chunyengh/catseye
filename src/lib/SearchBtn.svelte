@@ -2,23 +2,24 @@
   //  import { myIndexStore } from './IndexStore.ts';
     import SearchResult from './SearchResult.svelte';
   //  import { mySearchStore } from './SearchStore.ts';
-
+ 
     let { searchValue } = $props();
     let btnValue:string = $state(''); 
-    let search_query:string = $state('');
+    let searchquery:string = $state('');
     let re = $state();
    
     let responseObj = $state();
-    $inspect(search_query);
+    $inspect(searchquery);
     $inspect(responseObj);
     
     function convertSearchValue(){
         let btnValuewospacebe = btnValue.trim();
         let btnvaluearray = btnValuewospacebe.split(' ');
-        search_query = btnvaluearray.join('+');
+        searchquery = btnvaluearray.join('+');
     }
+ 
   
-    async function goSearch(searchQuery:string) {
+    async function goSearch(loopIndex:string, searchquery:string) {
         let url= 'http://127.0.0.1:5000/search'
             try {
                 const response = await fetch(url, {
@@ -29,8 +30,8 @@
                     body: JSON.stringify({
                        // 'loopIndex': get(myIndexStore).loopIndex, 
                        // 'sq': get(myIndexStore).searchQuery,
-                       'loopIndex':'0',
-                       'sq':searchQuery
+                       'loopIndex':loopIndex,
+                       'sq':searchquery
                     }),
                 }); 
 
@@ -45,7 +46,8 @@
         // response besides not ok, can also be network errors, use catch to catch errors     
                 console.error(e);
             }
-        }
+    }
+          
 </script>
 
 <button 
@@ -56,14 +58,14 @@
         //$myIndexStore.loopIndex = '0';
         //$myIndexStore.searchQuery = search_query;
         //re=$mySearchStore.goSearch();
-        goSearch(search_query);
+        goSearch('0', searchquery);
 
     }}
 >搜尋</button>
 <p>go search:{searchValue}</p> 
 
 {#if responseObj}
-    <!--p>i am here</p> -->
-    <SearchResult searchResult = {responseObj} />
+  
+    <SearchResult searchResult = {responseObj} /> 
 {/if}
 <!--p>i am not here</p> -->

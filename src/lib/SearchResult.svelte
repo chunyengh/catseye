@@ -8,8 +8,8 @@
     } from "./SearchType";
       
     let { searchResult } = $props();
-    
-   // let loops = searchResult.loops;//number of loops to retrieve all counts
+    let searchquery = searchResult.searchquery;
+    let loops = searchResult.loops;//number of loops to retrieve all counts
     let loopIndex = searchResult.loopIndex;
     let counts = searchResult.counts;
     let articleList = searchResult.articleList;
@@ -45,4 +45,11 @@
     }
 
 </script>
-<ArticleCheckBox loopIndex={loopIndex} counts={counts} testInfoObjArray={testInfoObjArray} />
+<p>articleListLength:{articleListLength}</p>
+<ArticleCheckBox 
+    loops={loops} 
+    loopIndex={loopIndex} 
+    counts={counts} 
+    searchquery={searchquery}
+    testInfoObjArray={testInfoObjArray} 
+/>

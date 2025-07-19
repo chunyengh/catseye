@@ -1,10 +1,16 @@
 
 <script lang='ts'>
+    //import { goSearch } from "./GoSearch";
     import type { ArticleIdObj, AuthorObj } from "./SearchType";
+    import PreSearchBtn from "./PreSearchBtn.svelte";
+    import NxtSearchBtn from "./NxtSearchBtn.svelte";
 
-    let { loopIndex, counts, testInfoObjArray } = $props();
+    let { loops, loopIndex, counts, searchquery, testInfoObjArray } = $props();
+   
     let totalSelectedArticleIdObjArray:ArticleIdObj[][] = $state([]);
-
+   // let reobj = $state();
+   // $inspect(reobj)
+    
     function namestr(authorObjArray:AuthorObj[]):string {
         let nameStrArray:string[]=[];
         authorObjArray.forEach((e:AuthorObj) => {
@@ -22,7 +28,12 @@
         });
         return idStrArray.join(', ');
     }
+    
+    //async function thisgosearch(){
+    //    reobj = await goSearch('0', 'caffe');
 
+    //}
+    
     $inspect(totalSelectedArticleIdObjArray);
 </script>
 
@@ -59,11 +70,13 @@
 </article>
 <pageOption>
     <prePage>
-        <button>上一頁</button>
-    </prePage>
-    <pageIndex>  第 {loopIndex + 1} 頁</pageIndex>
+        <PreSearchBtn currentLoopIndex={loopIndex} searchquery={searchquery}
+        />
+    </prePage> 
+    <pageIndex>第 {`${parseInt(loopIndex)+1}`}/{`${parseInt(loops)+1}`} 頁</pageIndex>
     <nxtPage>
-        <button>下一頁</button>
+        <NxtSearchBtn currentLoopIndex={loopIndex} loops = {loops} searchquery={searchquery}
+        />
     </nxtPage>
 </pageOption>
 <style>
