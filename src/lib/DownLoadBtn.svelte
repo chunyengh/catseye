@@ -1,47 +1,55 @@
 <script lang='ts'>
-    import KeywordInput from "./Input.svelte";
-    let sharedValue:string = $state('');
-    let {stringFromApp} = $props();
-    let searchTermFromInput = $state();
-    let searchTerm = {searchKey: "searchValue",};    
-    let url = $state('pubmedURL');
-    //let searchTerm:JSON= {} as JSON;
-    const handleClick = () => {
-        console.log(searchTerm);
-       // console.log('inputTextValue=');
-        searchTermFromInput = (JSON.stringify(searchTerm));
+    import type { ArticleIndexSelectedTestInfoObj }  from "./SearchType";
+    import { arrayOfArticleIndexSelectedTestInfoObj, searchquery } from "./SearchStore";
+    import { get } from "svelte/store";
+    import { addToast } from "./store";
+
+    let hasItemsToDownLoad = $state(false);
+    
+    async function goDownLoad(){
+        let selectedArray = get(arrayOfArticleIndexSelectedTestInfoObj);
+        let sq = get(searchquery);
+        
+        if (selectedArray.length != 0){
+            hasItemsToDownLoad = true;
+            await startDownLoad(sq, selectedArray);
+        } else {
+            addToast({'message':'no articles to download', 'timeout':2000});
+        }
     }
 
-   /* async function sendSearchTermToParent(searchTerm:JSON){
-    
+    async function startDownLoad(searchquery:string, selectedObjArray:ArticleIndexSelectedTestInfoObj[]){
+        let url= 'http://127.0.0.1:5000/download'
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(searchTerm)
+                body: JSON.stringify({
+                    'sq':searchquery,
+                    'data':selectedObjArray,
+                }),
             });
             if (!response.ok){
                 throw new Error('Response status: ${response.status');
             }
-            const responseObj:JSON = await response.json();
-            console.log(responseObj);
+           addToast({'message':'download success'});
         } catch (e){
             console.error(e)
         }
-    */
+    }
+    
 </script>
 
-<button onclick={handleClick}>
-    搜尋
+<button onclick={()=> {goDownLoad()}}>
+    下載文件
 </button>
 
- <p>Message:{stringFromApp}</p>
+ 
 
 <style>
     button {
         background-color: 'red' ;
     }
-
 </style>

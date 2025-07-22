@@ -1,71 +1,49 @@
 <script lang='ts'>
-  //  import { myIndexStore } from './IndexStore.ts';
     import SearchResult from './SearchResult.svelte';
-  //  import { mySearchStore } from './SearchStore.ts';
- 
+    import ArticleCheckBoxView from "./ArticleCheckBoxView.svelte";
+    import { searchquery, currentArticleIndex, arrayOfArticleIndexTestInfoObj, counts } from './SearchStore.js';
+    import { get } from 'svelte/store';
+    import { addToast } from './store.js';
+    import { goSearch } from './GoSearch.svelte.js';
+    
     let { searchValue } = $props();
-    let btnValue:string = $state(''); 
-    let searchquery:string = $state('');
-    let re = $state();
+    let thissearchquery:string = $state('');
    
     let responseObj = $state();
-    $inspect(searchquery);
-    $inspect(responseObj);
-    
-    function convertSearchValue(){
-        let btnValuewospacebe = btnValue.trim();
-        let btnvaluearray = btnValuewospacebe.split(' ');
-        searchquery = btnvaluearray.join('+');
-    }
- 
+    let aIndex = $state();
   
-    async function goSearch(loopIndex:string, searchquery:string) {
-        let url= 'http://127.0.0.1:5000/search'
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                       // 'loopIndex': get(myIndexStore).loopIndex, 
-                       // 'sq': get(myIndexStore).searchQuery,
-                       'loopIndex':loopIndex,
-                       'sq':searchquery
-                    }),
-                }); 
+    $inspect(responseObj);
+    $inspect(aIndex);
 
-                // focus on successful response;  i.e response OK (200-299) 
-                if (!response.ok){
-                    throw new Error(`${response.status} ${response.statusText}`);
-                }
-                //continue on processing successful response
-                responseObj = await response.json(); 
-               // return responseObj;
-            } catch (e){
-        // response besides not ok, can also be network errors, use catch to catch errors     
-                console.error(e);
-            }
+    function convertSearchValue(searchValue:string){
+        let btnValuewospacebe = searchValue.trim();
+        let btnvaluearray = btnValuewospacebe.split(' ');
+        thissearchquery = btnvaluearray.join('+');
     }
-          
+   
 </script>
 
 <button 
     aria-label='search button'
-    onclick={()=>{
-        btnValue = searchValue;
-        convertSearchValue();
-        //$myIndexStore.loopIndex = '0';
-        //$myIndexStore.searchQuery = search_query;
-        //re=$mySearchStore.goSearch();
-        goSearch('0', searchquery);
-
+    onclick={()=>{      
+        convertSearchValue(searchValue);
+        searchquery.set(thissearchquery);
+        let startArticleIndex = '0';
+        aIndex = startArticleIndex;
+        currentArticleIndex.set(startArticleIndex);
+        arrayOfArticleIndexTestInfoObj.set([]);
+        counts.set('0');
+        addToast({'message':`start search:${searchValue}`});
+        goSearch(startArticleIndex,thissearchquery).then(((value)=> responseObj=value))
     }}
->搜尋</button>
-<p>go search:{searchValue}</p> 
+>搜尋</button> 
 
 {#if responseObj}
-  
-    <SearchResult searchResult = {responseObj} /> 
+    <SearchResult searchResult = {responseObj} />   
+    
+{#each { length: get(arrayOfArticleIndexTestInfoObj).length -1 }, index}
+     <ArticleCheckBoxView index={index} />
+{/each}
+
 {/if}
-<!--p>i am not here</p> -->
+ 

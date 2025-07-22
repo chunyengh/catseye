@@ -1,23 +1,28 @@
 <!-- svelte-ignore state_referenced_locally -->
 <!-- display search result; 20 items per page -->
 <script lang='ts'>
-    import ArticleCheckBox from "./ArticleCheckBox.svelte";
     //pubmed gives authorname like: {'LastName':'Szabo','Initials':'NJ'}
     import type { 
-        TestInfoObj, AuthorObj, ArticleIdObj
+        TestInfoObj, AuthorObj, ArticleIdObj, ArticleIndexTestInfoObj
     } from "./SearchType";
       
+    import { get } from "svelte/store";
+    import {counts, searchquery, arrayOfArticleIndexTestInfoObj } from './SearchStore';
+
     let { searchResult } = $props();
-    let searchquery = searchResult.searchquery;
-    let loops = searchResult.loops;//number of loops to retrieve all counts
-    let loopIndex = searchResult.loopIndex;
-    let counts = searchResult.counts;
+    
+    let thissearchquery = searchResult.searchquery;
+    let thiscounts = searchResult.counts;
+    counts.set(thiscounts);
+    searchquery.set(thissearchquery);
+
     let articleList = searchResult.articleList;
     let articleListLength = articleList.length;
-   
+    let thisArrayOfArticleIndexTestInfoObj:ArticleIndexTestInfoObj[] = [];
+    //[{articleIndex, TestInfoObj}]
     let testInfoObjArray:TestInfoObj[] = [];
-    
     for (let i = 0; i < articleList.length; i++){
+        let articleIndex = `${i + get(arrayOfArticleIndexTestInfoObj).length}`;
         let article = articleList[i];
         let articleTitle:string = article.title;
         let authorObjArray:AuthorObj[] = article.authorList;
@@ -39,17 +44,21 @@
             articleIdObjArray:articleIdObjArray,
             articleAbstract:articleAbstract,
         }
-    
+        let articleIndexTestInfoObj:ArticleIndexTestInfoObj = {
+            articleIndex : articleIndex,
+            testInfoObj : testInfoObj,
+        }
+
         testInfoObjArray.push(testInfoObj);
-     
+        thisArrayOfArticleIndexTestInfoObj.push(articleIndexTestInfoObj);
     }
 
+    let oldArrayOfArticleIndexTestInfoObj = get(arrayOfArticleIndexTestInfoObj);
+    let newArray = oldArrayOfArticleIndexTestInfoObj.concat(thisArrayOfArticleIndexTestInfoObj);
+    let newSet = new Set(newArray);
+    arrayOfArticleIndexTestInfoObj.set([...newSet]);
+   
 </script>
-<p>articleListLength:{articleListLength}</p>
-<ArticleCheckBox 
-    loops={loops} 
-    loopIndex={loopIndex} 
-    counts={counts} 
-    searchquery={searchquery}
-    testInfoObjArray={testInfoObjArray} 
-/>
+
+
+
